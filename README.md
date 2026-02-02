@@ -46,7 +46,7 @@
    ```yaml
    theme: waifu-greeter
    ```
-   >  Make sure `secure_mode` is set to `False`, otherwise custom themes may not load properly.
+  
 
 4. **Restart LightDM** to apply changes:  
    This will log you out, so save your work!  
