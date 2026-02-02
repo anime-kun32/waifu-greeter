@@ -45,7 +45,6 @@
    Edit `/etc/lightdm/web-greeter.yml` and make sure it looks like this:  
    ```yaml
    theme: waifu-greeter
-   secure_mode: False
    ```
    >  Make sure `secure_mode` is set to `False`, otherwise custom themes may not load properly.
 
