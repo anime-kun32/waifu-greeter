@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waifu Greeter - LightDM Integration</title>
+
+<link rel="stylesheet" href="css/fonts/css/all.min.css">
+ <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body class="text-white">
+
+<!-- START SCREEN -->
+<div id="startScreen" class="absolute inset-0 flex flex-col items-center justify-center z-50">
+  <div id="clock" class="clock text-7xl mb-10 font-light"></div>
+  <div class="float-anim text-4xl mb-6">
+    <i class="fas fa-chevron-up"></i>
+  </div>
+  <p class="text-xl opacity-90">Press <kbd class="px-3 py-1 bg-white/10 rounded-md mx-1">Enter</kbd> to login</p>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="absolute inset-0 hidden">
+  <div class="glass-bg absolute inset-0" id="backgroundOverlay"></div>
+
+  <!-- CENTER USER SELECTION -->
+  <div id="centerUser" class="absolute inset-0 flex flex-col items-center justify-center">
+    <!-- User and password will be injected here -->
+  </div>
+
+  <!-- BOTTOM-LEFT DESKTOP ENVIRONMENT -->
+  <div class="absolute bottom-8 left-8 z-30">
+    <div class="flex flex-col items-center relative">
+      <button id="deBtn" class="icon-btn p-4 mb-2">
+        <svg viewBox="0 0 600 600" width="32" height="32" fill="rgba(255,255,255,0.9)">
+          <path d="m 300.00225,50.276971 188.04762,109.82273 -188.04988,109.82501 -188.04987,-109.82273 z"/>
+          <path d="M 66.323618,240.96448 253.58248,350.32445 V 517.21278 L 66.323618,392.28076 Z"/>
+          <path d="m 533.67638,240.96448 v 151.31628 l -187.25661,124.92975 V 350.32445 Z"/>
+        </svg>
+      </button>
+      <span id="currentSession" class="text-sm font-medium opacity-80">Loading...</span>
+      <div id="sessionList" class="dropdown-menu w-48" style="display: none;">
+        <!-- Sessions will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM-RIGHT CONTROLS -->
+  <div class="absolute bottom-8 right-8 z-30 flex space-x-4 items-end">
+    
+    <!-- USER MENU -->
+    <div class="flex flex-col items-center relative">
+      <button id="userBtn" class="icon-btn p-4 mb-2">
+        <svg height="32" width="32" fill="rgba(255,255,255,0.9)" viewBox="0 0 60.671 60.671">
+          <g>
+            <ellipse cx="30.336" cy="12.097" rx="11.997" ry="12.097"/>
+            <path d="M35.64,30.079H25.031c-7.021,0-12.714,5.739-12.714,12.821v17.771h36.037V42.9
+            C48.354,35.818,42.661,30.079,35.64,30.079z"/>
+          </g>
+        </svg>
+      </button>
+      <div id="userList" class="dropdown-menu w-36" style="display: none;">
+        <!-- Will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- SETTINGS MENU -->
+    <div class="flex flex-col items-center relative">
+      <button id="settingsBtn" class="icon-btn p-4 mb-2">
+        <svg fill="rgba(255,255,255,0.9)" width="32" height="32" viewBox="0 0 24 24">
+          <path d="M12,8a4,4,0,1,1-4,4A4,4,0,0,1,12,8Zm1-3.2V3a1,1,0,0,0-2,0V4.8a1,1,0,1,0,2,0ZM11,19.2V21a1,1,0,0,0,2,0V19.2a1,1,0,0,0-2,0ZM17.091,7.909a1,1,0,0,0,.707-.293l1.273-1.272a1,1,0,1,0-1.414-1.415L16.384,6.2a1,1,0,0,0,.707,1.708ZM6.343,19.071,7.616,17.8A1,1,0,0,0,6.2,16.384L4.929,17.657a1,1,0,1,0,1.414,1.414ZM21,11H19.2a1,1,0,0,0,0,2H21a1,1,0,0,0,0-2ZM2,12a1,1,0,0,0,1,1H4.8a1,1,0,1,0,0-2H3A1,1,0,0,0,2,12Zm14.384,5.8,1.273,1.272a1,1,0,1,0,1.414-1.415L17.8,16.384A1,1,0,0,0,16.384,17.8ZM6.343,4.929A1,1,0,0,0,4.929,6.343L6.2,7.616A1,1,0,0,0,7.616,6.2Z"/>
+        </svg>
+      </button>
+      <div id="settingsList" class="dropdown-menu w-56 p-4" style="display: none;">
+        <div class="mb-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-medium"><i class="fas fa-tint mr-2"></i>Blur Intensity</span>
+            <span id="blurValue" class="text-sm opacity-80">12px</span>
+          </div>
+          <div class="slider-wrapper">
+            <div class="slider-track">
+              <div class="slider-fill" id="blurFill"></div>
+            </div>
+            <div class="slider-thumb-container" id="blurThumb">
+              <div class="brightness-thumb">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="rgba(0,0,0,0.8)">
+                  <path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/>
+                </svg>
+              </div>
+              <div class="slider-value" id="blurValueTooltip">12px</div>
+            </div>
+            <input id="blurRange" type="range" class="slider-input" min="0" max="20" value="12" step="1">
+          </div>
+        </div>
+        
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-medium"><i class="fas fa-moon mr-2"></i>Dim Opacity</span>
+            <span id="dimValue" class="text-sm opacity-80">40%</span>
+          </div>
+          <div class="slider-wrapper">
+            <div class="slider-track">
+              <div class="slider-fill" id="dimFill"></div>
+            </div>
+            <div class="slider-thumb-container" id="dimThumb">
+              <div class="brightness-thumb">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="rgba(0,0,0,0.8)">
+                  <path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm0-10c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"/>
+                </svg>
+              </div>
+              <div class="slider-value" id="dimValueTooltip">40%</div>
+            </div>
+            <input id="dimRange" type="range" class="slider-input" min="0" max="80" value="40" step="1">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POWER MENU -->
+    <div class="flex flex-col items-center relative">
+      <button id="powerBtn" class="icon-btn p-4 mb-2">
+        <svg fill="rgba(255,255,255,0.9)" width="32" height="32" viewBox="0 0 49.548 49.549">
+          <g>
+            <path d="M30.203,4.387v4.385c7.653,2.332,13.238,9.451,13.238,17.857c0,10.293-8.373,18.667-18.667,18.667
+              S6.106,36.922,6.106,26.629c0-8.405,5.585-15.525,13.238-17.857V4.387C9.323,6.835,1.855,15.866,1.855,26.629
+              c0,12.639,10.281,22.92,22.919,22.92s22.92-10.281,22.92-22.92C47.694,15.865,40.224,6.835,30.203,4.387z"/>
+            <path d="M24.776,27.225c-1.41,0-2.554-1.145-2.554-2.555V2.554c0-1.41,1.144-2.554,2.554-2.554c1.41,0,2.554,1.144,2.554,2.554
+              V24.67C27.33,26.08,26.186,27.225,24.776,27.225z"/>
+          </g>
+        </svg>
+      </button>
+      <div id="powerList" class="dropdown-menu w-40" style="display: none;">
+        <div class="dropdown-item" id="loginAction">
+          <i class="fas fa-play mr-2"></i> Log In
+        </div>
+        <div class="dropdown-item" id="restartAction">
+          <i class="fas fa-redo mr-2"></i> Restart
+        </div>
+        <div class="dropdown-item" id="suspendAction">
+          <i class="fas fa-pause mr-2"></i> Suspend
+        </div>
+        <div class="dropdown-item text-red-400" id="shutdownAction">
+          <i class="fas fa-power-off mr-2"></i> Shut Down
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script src= "js/script.js"></script>
+<script src="js/tailwind.js"></script>
+</body>
+</html>

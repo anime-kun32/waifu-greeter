@@ -1,0 +1,17 @@
+{
+  "name": "Waifu Greeter",
+  "author": "anime-kun32",
+  "version": "1.0",
+  "main": "index.html",
+  "license": "GPL-3.0",
+  "description": "A Sexy Login UI for lightdm",
+  "theme_type": "web",
+  "requires": {
+    "web_greeter": ">=3.2.0",
+    "lightdm": ">=1.19.0"
+  },
+  "features": {
+    "battery": true,
+    "backlight": true
+  }
+}

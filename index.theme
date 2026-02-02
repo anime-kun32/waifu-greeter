@@ -1,0 +1,9 @@
+[Greeter]
+theme=waifu-greeter
+iconTheme=Adwaita
+fontName=Ubuntu
+background=#2d2d2d
+xft-antialias=true
+xft-dpi=96
+xft-hintstyle=hintfull
+xft-rgba=rgb
